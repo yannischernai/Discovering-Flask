@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort
-
+from hashlib import sha256
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -91,6 +91,7 @@ def post_delete(id):
 @app.route('/user/login', methods=('GET', 'POST'))
 def user_login():
     if request.method == 'POST':
+        ## information tirer du html de ce que l'utilisateur a ecris
         username = request.form['username']
         passworld = request.form['passworld']
 
@@ -101,8 +102,9 @@ def user_login():
         else:
             conn = get_db_connection()
             user = conn.execute('SELECT * FROM user WHERE username = ? and passworld = ?',
-                   (username,passworld)).fetchone()
+                   (username, (sha256(passworld.encode('utf-8')).hexdigest()))).fetchone()
             conn.close()
+            ## verifation de user si il est vide alors erreur si il est rempli alor ca marche
             if user:
                 return redirect(url_for('index'))
             else:

@@ -1,4 +1,5 @@
 import sqlite3
+from hashlib import sha256
 
 connection = sqlite3.connect('database.db')
 
@@ -18,7 +19,7 @@ cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
              
              
 cur.execute("INSERT INTO user (username, passworld) VALUES (?, ?)",
-            ('yannis', 'code')
+            ("yannis", (sha256("code".encode('utf-8')).hexdigest()))
             )
 
 connection.commit()
