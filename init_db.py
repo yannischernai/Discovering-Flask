@@ -1,5 +1,6 @@
 import sqlite3
 from hashlib import sha256
+from http import cookies
 
 connection = sqlite3.connect('database.db')
 
