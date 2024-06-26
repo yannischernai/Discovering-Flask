@@ -32,6 +32,7 @@ def is_authenticated():
         if user :
             return True
     return False
+   
 
 @app.route('/')
 def index():
@@ -102,6 +103,7 @@ def post_edit(id):
 def post_delete(id):
     if not is_authenticated():
         return redirect(url_for('user_login'))
+
     post = get_post(id)
     conn = get_db_connection()
     conn.execute('DELETE FROM posts WHERE id = ?', (id,))
@@ -114,6 +116,17 @@ def post_delete(id):
 ## USER
 ##
 
+@app.route('/user/login', methods=('GET',))
+def logout():
+    
+    token = request.cookies.get('token')
+    conn = get_db_connection()
+    conn.execute('UPDATE user SET token = ? WHERE token = ?',(None, token))
+    conn.commit()
+    conn.close()
+    return render_template('user/login.html')
+    
+    
 @app.route('/user/login', methods=('GET', 'POST'))
 def user_login():
     if is_authenticated():
@@ -123,27 +136,30 @@ def user_login():
         ## information tirer du html de ce que l'utilisateur a ecris
         username = request.form['username']
         passworld = request.form['passworld']
-
-        if not username:
+        
+        if not username and not passworld:
+            flash('username and passwolrd is required')
+        elif not username:
             flash('username is required!')
         elif not passworld:
             flash('passworld is required!')
+        elif not username and not passworld:
+            flash('username en passwolrd is required')
         else:
             conn = get_db_connection()
             user = conn.execute('SELECT * FROM user WHERE username = ? and passworld = ?',
                    (username, (sha256(passworld.encode('utf-8')).hexdigest()))).fetchone()
             conn.close()
             ## verifation de user si il est vide alors erreur si il est rempli alor ca marche
-            if user:
-                token = secrets.token_urlsafe(64)
-                conn = get_db_connection()
-                conn.execute('UPDATE user SET token = ? WHERE id = ?',(token, user["id"]))
-                conn.commit()
-                conn.close()
-                response = make_response(redirect(url_for('index')))
-                response.set_cookie( "token", token )
-                return response
-            else:
+        if user:
+            token = secrets.token_urlsafe(64)
+            conn = get_db_connection()
+            conn.execute('UPDATE user SET token = ? WHERE id = ?',(token, user["id"]))
+            conn.commit()
+            conn.close()
+            response = make_response(redirect(url_for('index')))
+            response.set_cookie( "token", token )
+            return response
+        else:
                 flash('Username ou mot de passe incorrect')
-
     return render_template('user/login.html')

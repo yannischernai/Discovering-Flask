@@ -1,18 +1,35 @@
 body{
-    background: #f5deb3;
+    background:  #566573 ;
 
 }
 
+html {
+    font-size: 20px; /* px signifie 'pixels': la taille de base pour la police est désormais 10 pixels de haut  */
+    font-family: "Open Sans", sans-serif; /* cela devrait être le reste du résultat obtenu à partir de Google fonts */
+  }
+  
+
 h1 {
+    font-size: 100px;
+    font-weight: bolder;
+    font-family: serif;
+    font-size: larger;
+    font-size: xx-large;
+    color: #eaecee;
     width:400px;
     margin:0 auto;
     margin-top:5%;
     padding-bottom: 100px;
 }
 
-button{
-    margin-top:5%;
+.badge{
+    font-size: larger;
+
 }
-
-
-
+h2{
+    font-family: cursive;
+    color: #eaecee;
+}
+.badge{
+     color:  #55007f ;
+}
