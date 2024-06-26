@@ -19,7 +19,7 @@ cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
             )
              
              
-cur.execute("INSERT INTO user (username, passworld) VALUES (?, ?)",
+cur.execute("INSERT INTO user (username, password) VALUES (?, ?)",
             ("yannis", (sha256("code".encode('utf-8')).hexdigest()))
             )
 

@@ -135,20 +135,20 @@ def user_login():
     if request.method == 'POST':
         ## information tirer du html de ce que l'utilisateur a ecris
         username = request.form['username']
-        passworld = request.form['passworld']
+        password = request.form['password']
         
-        if not username and not passworld:
+        if not username and not password:
             flash('username and passwolrd is required')
         elif not username:
             flash('username is required!')
-        elif not passworld:
-            flash('passworld is required!')
-        elif not username and not passworld:
+        elif not password:
+            flash('password is required!')
+        elif not username and not password:
             flash('username en passwolrd is required')
         else:
             conn = get_db_connection()
-            user = conn.execute('SELECT * FROM user WHERE username = ? and passworld = ?',
-                   (username, (sha256(passworld.encode('utf-8')).hexdigest()))).fetchone()
+            user = conn.execute('SELECT * FROM user WHERE username = ? and password = ?',
+                   (username, (sha256(password.encode('utf-8')).hexdigest()))).fetchone()
             conn.close()
             ## verifation de user si il est vide alors erreur si il est rempli alor ca marche
         if user:
