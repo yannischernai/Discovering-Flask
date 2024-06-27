@@ -126,7 +126,6 @@ def logout():
     conn.close()
     return render_template('user/login.html')
     
-    
 @app.route('/user/login', methods=('GET', 'POST'))
 def user_login():
     if is_authenticated():
@@ -134,9 +133,9 @@ def user_login():
 
     if request.method == 'POST':
         ## information tirer du html de ce que l'utilisateur a ecris
-        username = request.form['username']
+        username = request.form["username"].replace("'", "\\'")
         password = request.form['password']
-        
+
         if not username and not password:
             flash('username and passwolrd is required')
         elif not username:
@@ -147,19 +146,20 @@ def user_login():
             flash('username en passwolrd is required')
         else:
             conn = get_db_connection()
-            user = conn.execute('SELECT * FROM user WHERE username = ? and password = ?',
-                   (username, (sha256(password.encode('utf-8')).hexdigest()))).fetchone()
+            # user = conn.execute('SELECT * FROM user WHERE username = ? and password = ?',(username, (sha256(password.encode('utf-8')).hexdigest()))).fetchone()
+            
+            user = conn.execute(f"SELECT * FROM user WHERE username = '{username}' and password = '{sha256(password.encode('utf-8')).hexdigest()}'").fetchone()
             conn.close()
             ## verifation de user si il est vide alors erreur si il est rempli alor ca marche
-        if user:
-            token = secrets.token_urlsafe(64)
-            conn = get_db_connection()
-            conn.execute('UPDATE user SET token = ? WHERE id = ?',(token, user["id"]))
-            conn.commit()
-            conn.close()
-            response = make_response(redirect(url_for('index')))
-            response.set_cookie( "token", token )
-            return response
-        else:
+            if user:
+                token = secrets.token_urlsafe(64)
+                conn = get_db_connection()
+                conn.execute('UPDATE user SET token = ? WHERE id = ?',(token, user["id"]))
+                conn.commit()
+                conn.close()
+                response = make_response(redirect(url_for('index')))
+                response.set_cookie( "token", token )
+                return response
+            else:
                 flash('Username ou mot de passe incorrect')
     return render_template('user/login.html')

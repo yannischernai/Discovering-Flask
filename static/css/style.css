@@ -28,8 +28,12 @@ h1 {
 }
 h2{
     font-family: cursive;
-    color: #eaecee;
+    color: hsl(210, 11%, 93%);
 }
 .badge{
      color:  #55007f ;
+}
+
+.form-group{
+    color: aqua;
 }
